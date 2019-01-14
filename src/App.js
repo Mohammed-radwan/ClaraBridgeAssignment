@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 
+//********** | Get the Token from .env | *************\\
+
 const MY_ACCESS_TOKEN = process.env.REACT_APP_API_KEY;
 
-const ReplyItem=(props)=>{
 
+
+const ReplyItem=(props)=>{
   return(
     <tr>
       <th scope="row">{props.item.name}</th>
@@ -22,31 +25,41 @@ class App extends Component {
         replies:[],
       }   
   }
+//********** | Throw an error if there is any | *************\\
+
 checkErrors(response){
   if (response.meta.code !== 200) {
       throw new Error('Invalid response:' + response.error_description);
     }
   }
+
+//********** | Encode the parameters before pass it to the URL | *************\\
+
 encodeParams(params) {
     return Object.entries(params).map(([k, v]) => `${k}=${encodeURI(v)}`).join('&')
   }
-  
+
 componentDidMount= async()=>{
+
+//********** | Fetch the messages | *************\\
 
   const res = await  fetch (`https://cors.io/?https://api.engagor.com/17966/settings/canned_responses/?access_token=${MY_ACCESS_TOKEN}`);
   
   const responses= await res.json();
   this.checkErrors(responses);
   const data=responses.response.data
- 
-  
   const messages = data.map(r => r.message);
+
+
 
   const params = {
     access_token: `${MY_ACCESS_TOKEN}`, 
     string:JSON.stringify(messages),
     language: 'en'
   }
+
+//********** | Send the messages as a parameter and get the response as an array  | *************\\
+
   const response = await fetch(`https://cors.io/?https://api.engagor.com/tools/sentiment/?`+ this.encodeParams(params));
   const json = await response.json();
   this.checkErrors(responses);
@@ -57,6 +70,8 @@ componentDidMount= async()=>{
   this.setState({ loading: false, replies });
   
  }
+
+ //********** | Render the messages and sentiments | *************\\
   render() {
  	  if (this.state.loading) { return <p>Loading....</p> }
         const replies =this.state.replies.map((item)=>{
