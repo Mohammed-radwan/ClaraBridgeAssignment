@@ -6,15 +6,22 @@ import './App.css';
 const MY_ACCESS_TOKEN = process.env.REACT_APP_API_KEY;
 
 
-
-const ReplyItem=(props)=>{
+class ReplyItem extends Component{
+  
+  render(){
+    const x=(this.props.item.images.length>0)?this.props.item.images.map((element) => {
+    return<img src={element.url} width="100" alt="nothing" key={element.id}/>  
+    })
+    :<p> </p>
   return(
     <tr>
-      <th scope="row">{props.item.name}</th>
-      <td>{props.item.message}</td>
-      <td>{props.item.sentiment}</td>
+      <th scope="row">{this.props.item.name}</th>
+      <td>{this.props.item.message}</td>
+      <td>{x}</td>
+      <td>{this.props.item.sentiment}</td>
     </tr> 
         )
+  }
 }
 
 class App extends Component {
@@ -86,6 +93,7 @@ componentDidMount= async()=>{
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Message</th>
+            <th scope="col">Images</th>
             <th scope="col">Sentiment</th>
           </tr>
         </thead>
